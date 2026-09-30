@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}Formular prüfen – Zahlenraten{% endblock %}
+{% block layout_class %}single-column{% endblock %}
+{% block content %}
+<section class="panel"><h1>Bitte versuche es erneut</h1><p class="error-message" role="alert">{{ message }}</p><a class="button" href="{{ url_for('game') }}">Zur aktuellen Spielseite</a></section>
+{% endblock %}

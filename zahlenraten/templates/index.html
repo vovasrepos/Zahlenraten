@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="panel welcome" aria-labelledby="start-title">
+    <p class="eyebrow">Neues Spiel</p>
+    <h1 id="start-title">Errate die Zahl zwischen 0 und 100.</h1>
+    <p class="introduction">Der Computer denkt sich eine ganze Zahl aus. Nach jedem Tipp erfährst du, ob sie größer oder kleiner ist. Je weniger Versuche du brauchst, desto weiter oben stehst du in der Bestenliste.</p>
+    <form method="post" novalidate>
+        <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
+        <label for="player_name">Dein Name</label>
+        <input id="player_name" name="player_name" type="text" maxlength="50" required
+               value="{{ name }}" autocomplete="nickname" data-autofocus
+               aria-describedby="name-hint{% if error %} name-error{% endif %}"
+               {% if error %}aria-invalid="true"{% endif %}>
+        <p class="hint" id="name-hint">Wird zusammen mit deiner Versuchsanzahl in der Bestenliste gespeichert. Bitte verwende einen Spitznamen.</p>
+        {% if error %}<p class="error-message" id="name-error" role="alert">{{ error }}</p>{% endif %}
+        <div class="actions start-actions">
+            <button class="button" type="submit">Spiel starten <span aria-hidden="true">→</span></button>
+            <span class="hint">oder <kbd>Enter</kbd> drücken</span>
+        </div>
+    </form>
+</section>
+{% include "leaderboard.html" %}
+{% endblock %}

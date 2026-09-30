@@ -1,0 +1,22 @@
+<section class="panel leaderboard" id="bestenliste" aria-labelledby="leaderboard-title" tabindex="-1">
+    <h2 id="leaderboard-title">Bestenliste</h2>
+    <p class="subheading">Wenigste Versuche zuerst</p>
+    {% if leaders %}
+    <table>
+        <caption class="sr-only">Die besten 10 Spielrunden{% if own %} und dein aktuelles Ergebnis{% endif %}. Gleiche Versuchsanzahl bedeutet gleicher Platz.</caption>
+        <thead><tr><th scope="col">Platz</th><th scope="col">Name</th><th scope="col">Versuche</th></tr></thead>
+        <tbody>
+        {% for entry in leaders %}
+        {% set is_own = game is defined and entry['id'] == game['id'] %}
+        <tr {% if is_own %}class="own-result" aria-current="true"{% endif %}>
+            <td>{{ entry['place'] }}</td>
+            <td class="leader-name">{{ entry['player_name'] }}{% if is_own %} <span class="you-badge">Du</span>{% endif %}</td>
+            <td>{{ entry['attempts'] }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state"><span class="empty-symbol" aria-hidden="true">☆</span><p>Noch keine Ergebnisse.</p><p class="hint">Spiele die erste Runde und sichere dir einen Platz in der Bestenliste.</p></div>
+    {% endif %}
+</section>

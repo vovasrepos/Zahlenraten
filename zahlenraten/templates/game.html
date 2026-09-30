@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}{% if feedback %}{{ feedback.number }} ist {{ feedback.label }} – {% endif %}Zahlenraten{% endblock %}
+{% block content %}
+<section class="panel game-panel" aria-labelledby="game-title">
+    <div class="game-heading">
+        <h1 id="game-title"><span class="desktop-word">Rate eine </span><span class="mobile-word">Z</span><span class="desktop-word">Z</span>ahl von 0 bis 100</h1>
+        <p class="attempt-count">Versuche: {{ game['attempts'] }}</p>
+    </div>
+    {% if feedback %}
+    <div class="feedback-box {{ feedback.kind }}" role="status" id="feedback">
+        <span class="feedback-icon" aria-hidden="true">{{ feedback.arrow }}</span>
+        <div><h2>{{ feedback.number }} ist {{ feedback.label }}.</h2>
+            <p>{% if feedback.kind == 'low' %}<span class="desktop-word">Die gesuchte Zahl ist größer – </span>rate höher.{% else %}<span class="desktop-word">Die gesuchte Zahl ist kleiner – </span>rate niedriger.{% endif %}</p>
+        </div>
+    </div>
+    {% else %}
+    <div class="feedback-box neutral" id="feedback"><span class="feedback-icon" aria-hidden="true">?</span><div><h2>Was ist dein erster Tipp?</h2><p>Ich habe mir eine Zahl ausgedacht. Los geht’s!</p></div></div>
+    {% endif %}
+    <div class="range-block">
+        <div class="range-heading"><p id="range-text">Noch möglich: {{ lower }} bis {{ upper }}</p><span class="hint desktop-word">aus deinen bisherigen Tipps</span></div>
+        <div class="range-track" aria-hidden="true"><span style="left: {{ lower / 101 * 100 }}%; width: {{ (upper - lower + 1) / 101 * 100 }}%"></span></div>
+        <div class="range-labels" aria-hidden="true"><span>0</span><span>50</span><span>100</span></div>
+    </div>
+    {% set errors = get_flashed_messages(category_filter=['error']) %}
+    <form method="post" class="guess-form" novalidate>
+        <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
+        <input type="hidden" name="attempts" value="{{ game['attempts'] }}">
+        <label for="guess">Dein nächster Tipp</label>
+        <div class="guess-controls">
+            <input id="guess" name="guess" type="text" inputmode="numeric" maxlength="100" required
+                   value="{{ raw_guess }}" autocomplete="off" data-autofocus
+                   aria-describedby="feedback range-text guess-hint{% if errors %} guess-errors{% endif %}"
+                   {% if errors %}aria-invalid="true"{% endif %}>
+            <button type="submit" class="button">Raten</button>
+        </div>
+        {% if errors %}
+        <div class="error-message" id="guess-errors" role="alert"><span class="error-icon" aria-hidden="true">!</span><div>{% for error in errors %}<p>{{ error }}</p>{% endfor %}</div></div>
+        {% else %}
+        <p class="hint" id="guess-hint">Ganze Zahl von 0 bis 100 · mit <kbd>Enter</kbd> abschicken</p>
+        {% endif %}
+        {% if errors %}<span id="guess-hint" class="sr-only">Ganze Zahl von 0 bis 100. Mit Enter abschicken.</span>{% endif %}
+    </form>
+</section>
+<section class="panel tips-panel" aria-labelledby="tips-title">
+    <h2 id="tips-title">Deine Tipps</h2>
+    {% if history %}
+    <ol class="tips-list">
+        {% for tip in history %}
+        <li {% if loop.last %}class="latest"{% endif %}>
+            <span class="tip-sequence">{{ tip.sequence }}.</span>
+            <span class="tip-number">{{ tip.number }}</span>
+            <span class="tip-tag {{ tip.kind }}"><span aria-hidden="true">{{ tip.arrow }}</span> {{ tip.label }}</span>
+        </li>
+        {% endfor %}
+    </ol>
+    {% else %}<p class="hint tips-empty">Deine Tipps erscheinen hier, sobald du eine Zahl eingibst.</p>{% endif %}
+</section>
+{% endblock %}

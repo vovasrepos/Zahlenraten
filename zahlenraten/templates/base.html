@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Zahlenraten{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='focus.js') }}" defer></script>
+</head>
+<body class="{% if active_game %}playing{% endif %}">
+    <a class="skip-link" href="#main-content">Zum Inhalt springen</a>
+    <header class="site-header">
+        <div class="header-inner">
+            <a class="brand" href="{{ url_for('index') }}"><span class="brand-icon" aria-hidden="true">?</span><span>Zahlenraten</span></a>
+            {% if active_game %}
+            <div class="game-navigation">
+                <span class="player-name">Spieler: <strong>{{ game['player_name'] }}</strong></span>
+                <form action="{{ url_for('end_game') }}" method="post">
+                    <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
+                    <button class="button secondary end-button" type="submit"><span class="desktop-word">Spiel </span>beenden</button>
+                </form>
+            </div>
+            {% else %}
+            <nav aria-label="Hauptnavigation">
+                <a href="{% if request.endpoint in ['index', 'result'] %}#bestenliste{% else %}{{ url_for('index') }}#bestenliste{% endif %}">Bestenliste</a>
+            </nav>
+            {% endif %}
+        </div>
+    </header>
+    <main id="main-content" class="layout {% block layout_class %}{% endblock %}" tabindex="-1">
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

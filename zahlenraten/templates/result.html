@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Richtig! Die Zahl war {{ game['secret_number'] }} – Zahlenraten{% endblock %}
+{% block content %}
+<section class="panel result-panel" aria-labelledby="result-title">
+    <div class="success-icon" aria-hidden="true">✓</div>
+    <h1 id="result-title" tabindex="-1" data-autofocus>Richtig! Die Zahl war {{ game['secret_number'] }}.</h1>
+    <p class="result-description">Du hast <strong>{{ game['attempts'] }} Versuch{% if game['attempts'] != 1 %}e{% endif %}</strong> gebraucht – das ist <strong>Platz {{ own['place'] }}</strong> in der Bestenliste.</p>
+    <p class="saved"><span aria-hidden="true">✓</span> Ergebnis gespeichert</p>
+    <section class="journey" aria-labelledby="journey-title">
+        <h2 id="journey-title">Dein Weg zur Zahl</h2>
+        <ol class="journey-list">
+        {% for tip in history %}<li class="{{ tip.kind }}"><span class="sr-only">Tipp {{ tip.sequence }}: </span><span class="journey-number">{{ tip.number }}</span> {{ tip.label }}</li>{% endfor %}
+        </ol>
+    </section>
+    <div class="actions result-actions">
+        <form method="post" action="{{ url_for('index') }}">
+            <input type="hidden" name="csrf_token" value="{{ session['csrf_token'] }}">
+            <input type="hidden" name="player_name" value="{{ game['player_name'] }}">
+            <button type="submit" class="button">Nochmal spielen</button>
+        </form>
+        <a class="button secondary" href="{{ url_for('index') }}">Mit anderem Namen spielen</a>
+    </div>
+</section>
+{% include "leaderboard.html" %}
+{% endblock %}
